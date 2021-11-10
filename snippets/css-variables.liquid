@@ -1,0 +1,113 @@
+{% style %}
+{%- assign main_font = settings.main_font -%}
+{%- assign nav_font = settings.nav_font -%}
+{%- assign heading_font = settings.heading_font -%}
+  :root {
+    --main-family: {{ main_font.family }}, {{ main_font.fallback_families }};
+    --main-weight: {{ main_font.weight }};
+    --nav-family: {{ nav_font.family }}, {{ nav_font.fallback_families }};
+    --nav-weight: {{ nav_font.weight }};
+    --heading-family: {{ heading_font.family }}, {{ heading_font.fallback_families }};
+    --heading-weight: {{ heading_font.weight }};
+
+    --announcement-size: {{ settings.announcement_size }}px;
+    --logo-size: {{ settings.logo_size }}px;
+    --font-size: {{ settings.font_size }}px;
+    --h1-size: {{ settings.h1_size }}px;
+    --h2-size: {{ settings.h2_size }}px;
+    --h3-size: {{ settings.h3_size }}px;
+    --nav-size: {{ settings.nav_size }}px;
+    --border-weight: {{ settings.border_weight }};
+    --top-bar-background: {{ settings.top_bar_background }};
+    --top-bar-color: {{ settings.top_bar_color }};
+    --social-links: {{ settings.social_links }};
+    --header-background: {{ settings.header_background }};
+    --logo-color: {{ settings.logo_color }};
+    --cart-links: {{ settings.cart_links }};
+    --cart-links-hover: {{ settings.cart_links_hover }};
+    --background: {{ settings.background }};
+    --header_color: {{ settings.header_color }};
+    --text-color: {{ settings.text_color }};
+    --link-color: {{ settings.link_color }};
+    --sale-color: {{ settings.sale_color }};
+    --dotted-color: {{ settings.dotted_color }};
+    --button-color: {{ settings.button_color }};
+    --button-text: {{ settings.button_text }};
+    --button-hover: {{ settings.button_hover }};
+    --button-text-hover: {{ settings.button_text_hover }};
+    --secondary-button-color: {{ settings.secondary_button_color }};
+    --secondary-button-hover: {{ settings.secondary_button_hover }};
+    --secondary-button-text: {{ settings.secondary_button_text }};
+    --navigation: {{ settings.navigation }};
+    --nav-color: {{ settings.nav_color }};
+    --nav-hover-color: {{ settings.nav_hover_color }};
+    --nav-hover-link-color: {{ settings.nav_hover_link_color }};
+    --dropdown-background-color: {{ settings.dropdown_background_color }};
+    --nav-dropdown-color: {{ settings.nav_dropdown_color }};
+    --dropdown-hover-background-color: {{ settings.dropdown_hover_background_color }};
+    --dropdown-hover-link-color: {{ settings.dropdown_hover_link_color }};
+    --directional-background: {{ settings.directional_background }};
+    --directional-hover-background: {{ settings.directional_hover_background }};
+    --directional-color: {{ settings.directional_color }};
+    --directional-hover-color: {{ settings.directional_hover_color }};
+    --swatch-color: {{ settings.swatch_color }};
+    --swatch-background: {{ settings.swatch_background }};
+    --swatch-border: {{ settings.swatch_border }};
+    --swatch-selected-color: {{ settings.swatch_selected_color }};
+    --swatch-selected-background: {{ settings.swatch_selected_background }};
+    --swatch-selected-border: {{ settings.swatch_selected_border }};
+    --new-background: {{ settings.new_background }};
+    --new-text: {{ settings.new_text }};
+    --sale-background: {{ settings.sale_background }};
+    --sale-text: {{ settings.sale_text }};
+    --soldout-background: {{ settings.soldout_background }};
+    --soldout-text: {{ settings.soldout_text }};
+    --icons: {{ settings.icons }};
+    --icons-hover: {{ settings.icons_hover }};
+    --footer-background: {{ settings.footer_background }};
+    --footer-color: {{ settings.footer_color }};
+    --footer-border: {{ settings.footer_border }};
+    --error-msg-dark: #e81000;
+    --error-msg-light: {{ '#e81000' | color_lighten: 50 }};
+    --success-msg-dark: #007f5f;
+    --success-msg-light: {{ '#007f5f' | color_lighten: 70 }};
+    --free-shipping-bg: {{ settings.free_shipping_bg }};
+    --free-shipping-text: {{ settings.free_shipping_text }};
+    --error-color: {{ settings.error_color }};
+    --error-color-light: {{ settings.error_color | color_lighten: 50 }};
+    --keyboard-focus-color: {{ settings.keyboard_focus }};
+    --keyboard-focus-border-style: {{ settings.focus_border_style }};
+    --keyboard-focus-border-weight: {{ settings.focus_border_weight }};
+    --icon-border-color: {{ settings.text_color | color_lighten: 90 }};
+    --thumbnail-slider-outline-color: {{ settings.text_color | color_lighten: 40 }};
+    --price-unit-price-color: {{ settings.text_color | color_lighten: 60 }};
+    --select-arrow-bg: url({{ 'select-arrow.png' | asset_url }});
+    --product-info-align: {{ settings.details_align }};
+    --collection-item-image-height: 400px;
+    --color-filter-size: 30px;
+    --color-body-text: var(--text-color);
+    --color-body: var(--background);
+    --color-bg: var(--background);
+
+    {% if settings.button_corners == 'curved' %}
+      --button-corners: 3px;
+    {% else %}
+      --button-corners: 0;
+    {% endif %}
+  }
+  @media screen and (min-width: 741px) and (max-width: 1220px) {
+    :root {
+        --collection-item-image-height: 320px;
+    }
+  }
+  @media (max-width: 740px) {
+    :root {
+      --font-size: calc({{ settings.font_size }}px - ({{ settings.font_size }}px * 0.15));
+      --nav-size: calc({{ settings.nav_size }}px - ({{ settings.nav_size }}px * 0.15));
+      --h1-size: calc({{ settings.h1_size }}px - ({{ settings.h1_size }}px * 0.15));
+      --h2-size: calc({{ settings.h2_size }}px - ({{ settings.h2_size }}px * 0.15));
+      --h3-size: calc({{ settings.h3_size }}px - ({{ settings.h3_size }}px * 0.15));
+      --collection-item-image-height: 220px;
+    }
+  }
+{% endstyle %}

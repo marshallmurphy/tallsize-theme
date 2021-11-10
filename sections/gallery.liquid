@@ -1,0 +1,288 @@
+<section class="homepage-section gallery__section" data-section-id="{{ section.id }}" data-aos="fade">
+
+  {% if section.settings.full_width %}<div class="gridlock-fluid"><div class="row">{% endif %}
+  <div class="gallery__section-container row">
+    {% for block in section.blocks %}
+    {% case block.settings.image_width %}
+    {% when '25%' %}
+    {%- assign image_size = '500x' -%}
+    {%- assign image_width = 'desktop-3 tablet-fourth' -%}
+    {% when '33%' %}
+    {%- assign image_size = '500x' -%}
+    {%- assign image_width = 'desktop-4 tablet-2' -%}
+    {% when '50%' %}
+    {%- assign image_size = '800x' -%}
+    {%- assign image_width = 'desktop-6 tablet-3' -%}
+    {% when '66%' %}
+    {%- assign image_size = '1200x' -%}
+    {%- assign image_width = 'desktop-8 tablet-two-thirds' -%}
+    {% when '75%' %}
+    {%- assign image_size = '1200x' -%}
+    {%- assign image_width = 'desktop-9 tablet-three-quarter' -%}
+    {% when '100%' %}
+    {%- assign image_size = '1920x' -%}
+    {%- assign image_width = 'desktop-12 tablet-6' -%}
+    {% endcase %}
+
+    {%- assign img_url = block.settings.image | img_url: image_size -%}
+    <div class="gallery__section-block {% if section.settings.full_width and block.settings[image_size] == '100%' %} centered{% endif %} {{ image_width }} mobile-3 promo-{{ block.id }}{% if forloop.last %} last-block{% endif %}" {{ block.shopify_attributes }}>
+        {% if block.settings.link != blank and block.settings.button_text == blank %}
+        <a href="{{ block.settings.link }}">
+        {% endif %}
+        <div class="gallery__section-image{% if block.settings.overlay %} overlay{% endif %}">
+          {% if block.settings.image != blank %}
+          {% render 'basic-responsive-image', type: block.settings.image, data_widths: '[180, 360, 540, 720, 900, 1080, 1296, 1512]' %}
+          <noscript>
+            <img src="{{ block.settings.image | img_url: '800x' }}" alt="{{ block.settings.image.alt }}">
+          </noscript>
+          {% else %}
+          <div class="onboard">
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+          {% endif %}
+        </div>
+        {% assign hide_caption = false %}
+        {% if block.settings.heading_text == blank and block.settings.subheading == blank and block.settings.button_text == blank %}
+        {% assign hide_caption = true %}
+        {% endif %}
+        {% unless hide_caption %}
+        <div class="gallery__image-caption">
+          {% if block.settings.heading_text != blank %}
+          <h3>{{ block.settings.heading_text | escape }}</h3>
+          {% endif %}
+          {% if block.settings.subheading != blank %}
+          <p>{{ block.settings.subheading | escape }}</p>
+          {% endif %}
+          {% if block.settings.link != blank and block.settings.button_text != blank %}
+          <div class="clear"></div>
+          <a class="button" href="{{ block.settings.link }}">
+            {{ block.settings.button_text }}
+          </a>
+          {% endif %}
+        </div>
+        {% endunless %}
+        {% if block.settings.link != blank and block.settings.button_text == blank %}
+        </a>
+        {% endif %}
+    </div>
+
+    <style>
+      .gallery__section-block.promo-{{ block.id }} .gallery__image-caption {
+          text-align: {{ block.settings.text_align }};
+          top: {{ block.settings.caption_vertical }}%;
+          left: {{ block.settings.caption_horizontal }}%;
+          -webkit-transform: translate(-{{ block.settings.caption_horizontal }}%, -{{ block.settings.caption_vertical }}%);
+          -ms-transform: translate(-{{ block.settings.caption_horizontal }}%, -{{ block.settings.caption_vertical }}%);
+          -moz-transform: translate(-{{ block.settings.caption_horizontal }}%, -{{ block.settings.caption_vertical }}%); -o-transform: translate(-{{ block.settings.caption_horizontal }}%, -{{ block.settings.caption_vertical }}%); transform: translate(-{{ block.settings.caption_horizontal }}%, -{{ block.settings.caption_vertical }}%);
+          background: {{ block.settings.caption_background }};
+      }
+      .gallery__section-block.promo-{{ block.id }} .gallery__image-caption h3 {
+        color: {{ block.settings.text_color }};
+      }
+      .gallery__section-block.promo-{{ block.id }} .gallery__image-caption p {
+        color: {{ block.settings.text_color }};
+      }
+    </style>
+    {% endfor %}
+  </div>
+  {% if section.settings.full_width %}</div></div>{% endif %}
+
+  {% if section.blocks.size == 0 %}
+    {% render 'no-blocks' %}
+  {% endif %}
+<style>
+  #shopify-section-{{ section.id }} .gallery__section-block .gallery__image-caption h3 {
+    font-size: {{ section.settings.promo_size }}px;
+  }
+  #shopify-section-{{ section.id }} .gallery__section-block .gallery__image-caption p {
+    font-size: {{ section.settings.hidden_size }}px;
+  }
+</style>
+</section>
+
+
+<div class="clear"></div>
+
+{% schema %}
+{
+    "name": "Gallery",
+	   "max_blocks": 6,
+    "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Enable full width",
+      "default": false
+	  },
+    {
+      "type": "range",
+      "id": "promo_size",
+      "min": 12,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "hidden_size",
+      "min": 12,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "label": "Subheading size",
+      "default": 13
+    }
+  ],
+	"blocks": [
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "800px x 600px recommended"
+        },
+        {
+          "type": "checkbox",
+          "id": "overlay",
+          "label": "Add image overlay",
+          "info":"This can help with text contrast"
+        },
+        {
+          "type": "select",
+          "id": "image_width",
+          "label": "Width",
+          "default": "33%",
+          "options": [
+		        {
+               "value":"25%",
+               "label":"25%"
+            },
+            {
+               "value":"33%",
+               "label":"33%"
+            },
+            {
+               "value":"50%",
+               "label":"50%"
+            },
+            {
+               "value":"66%",
+               "label":"66%"
+            },
+            {
+               "value":"75%",
+               "label":"75%"
+            },
+            {
+               "value":"100%",
+               "label":"100%"
+            }
+          ]
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+           "type": "header",
+           "content": "Caption content"
+        },
+        {
+          "type": "text",
+          "id": "heading_text",
+          "label": "Heading",
+          "default": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading",
+          "default": "Subheading"
+        },
+        {
+          "id": "button_text",
+          "type": "text",
+          "label": "Button text",
+          "default": "Button",
+          "info": "Visible only if a link is chosen"
+        },
+        {
+           "type": "header",
+           "content": "Caption style"
+        },
+        {
+          "type": "range",
+          "id": "caption_horizontal",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "label": "Caption horizontal position",
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "caption_vertical",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "label": "Caption vertical position",
+          "default": 50
+        },
+        {
+          "type": "select",
+          "id": "text_align",
+          "label": "Text align",
+          "default": "center",
+          "options": [
+		        {
+               "value":"left",
+               "label":"Left"
+            },
+            {
+               "value":"center",
+               "label":"Center"
+            }
+          ]
+        },
+        {
+         "type": "color",
+         "id": "caption_background",
+         "label": "Caption background",
+         "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text color",
+          "default": "#000000"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Gallery",
+      "category": "Image",
+      "blocks": [
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        }
+      ]
+    }
+  ]
+  }
+{% endschema %}

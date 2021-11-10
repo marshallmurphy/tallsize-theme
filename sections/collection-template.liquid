@@ -1,0 +1,241 @@
+{%- liquid
+  assign collection_link = ''
+  if collection.handle
+    assign collection_link = '/collections/' | append: collection.handle
+  elsif collection.products.first.type == collection.title
+    assign collection_link = collection.title | url_for_type
+  elsif collection.products.first.vendor == collection.title
+    assign collection_link = collection.title | url_for_vendor
+  endif
+  -%}
+<section data-section-id="{{ section.id }}" class="collection__page" data-section-type="collection-section" data-collection-link="{{ collection_link }}">
+
+  {% assign show_sidebar = false %}
+  {% for block in section.blocks %}
+  {% if block.type == 'menu' or block.type == 'image' or block.type == 'text' or block.type == 'vendor_list' or block.type == 'side_filter' %}
+  {% assign show_sidebar = true %}
+  {% endif %}
+  {% endfor %}
+
+  {% assign grid = section.settings.grid %}
+  {%- assign product_limit = section.settings.grid | times: section.settings.rows -%}
+  {% paginate collection.products by product_limit %}
+
+  <div class="collection__page-description desktop-12 mobile-3">
+    <h1>{{ collection.title }}</h1>
+    <div class="rte">
+      {{ collection.description | remove: "[banner]" }}
+    </div>
+  </div>
+
+<div class="clear"></div>
+
+<div class="collection__page-filter desktop-12 tablet-6 mobile-3">
+  {% render 'filter', collection: collection, block: block %}
+</div>
+
+{% if current_tags.size >= 1 %}
+<div class="clear"></div>
+  <ul class="current_tags desktop-12 tablet-6 mobile-3">
+  {% for tag in collection.all_tags %}
+    {% if current_tags contains tag %}
+      <li class="current_tag">
+        {{ tag | link_to_remove_tag: tag }}
+      </li>
+    {% endif %}
+  {% endfor %}
+    <li><a class="clear-tags" href="{{ collection.url }}">{{ 'collections.general.clear_all_tags' | t }}</a></li>
+  </ul>
+<div class="clear"></div>
+{% endif %}
+
+{% if show_sidebar %}
+  {% render 'collection-sidebar',
+    collection: collection, block: block  %}
+{% endif %}
+
+<div class="product-loop collection__page-products grid-align-{{ settings.details_align }}{% if show_sidebar %} desktop-10 tablet-6 mobile-3{% endif %}" data-aos="fade">
+  {% assign products-per-row = section.settings.products_per_row %}
+  {% for product in collection.products %}
+  <div  id="product-listing-{{ product.id }}" class="item product-index collection__page-product js-product-listing" data-alpha="{{ product.title }}" data-product-id="{{ product.id }}" data-price="{{ product.price }}">
+    {% render 'product-listing',
+      product: product,
+      collection: collection,
+      grid_item_width: grid_item_width,
+      products-per-row: section.settings.products_per_row %}
+  </div>
+  {% endfor %}
+
+  <style>
+  .collection__page-products {
+    grid-template-columns: repeat({{ grid }}, 1fr);
+  }
+  </style>
+</div>
+<script>
+(function collectionFilters() {
+  const collFilters = document.querySelectorAll('.coll-filter');
+  if (collFilters.length > 0) {
+    collFilters.forEach((collFilter) => {
+      collFilter.addEventListener('change', function(){
+        var newTags = [];
+        collFilters.forEach((collFilter) => {
+          for(var i = 0; i <= collFilter.length-1; i++){
+            if(collFilter[i].selected == true && collFilter[i].value != "") {
+              newTags.push(collFilter[i].value);
+            }
+          }
+        });
+        if (newTags.length) {
+          var query = newTags.join('+');
+          window.location.href = '/collections/{{ collection.handle }}/' + query;
+        }
+        else {
+          {% if collection.handle %}
+          window.location.href = '/collections/{{ collection.handle }}';
+          {% elsif collection.products.first.type == collection.title %}
+          window.location.href = '{{ collection.title | url_for_type }}';
+          {% elsif collection.products.first.vendor == collection.title %}
+          window.location.href = '{{ collection.title | url_for_vendor }}';
+          {% endif %}
+        }
+      });
+    });
+  }
+})();
+</script>
+{% render 'pagination',
+  paginate: paginate %}
+{% endpaginate %}
+<div class="clear"></div>
+</section>
+
+{% schema %}
+  {
+    "name": "Collection page",
+    "max_blocks":8,
+    "settings": [
+      {
+        "type": "range",
+        "id": "rows",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "label": "Rows",
+        "default": 4
+      },
+      {
+        "type": "range",
+        "id": "grid",
+        "min": 2,
+        "max": 4,
+        "step": 1,
+        "label": "Products per row",
+        "default": 3
+      },
+      {
+        "type": "checkbox",
+        "id": "sort_by",
+        "label": "Show sort by",
+        "default": true
+      }
+    ],
+    "blocks":[
+    {
+      "type":"menu",
+      "name":"Sidebar Menu",
+      "settings":[
+        {
+         "type": "link_list",
+         "id": "side_nav",
+         "label": "Sidebar menu"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Menu title",
+          "default": "Explore"
+        }
+      ]
+    },
+    {
+      "type":"vendor_list",
+      "name":"Sidebar vendor list",
+      "limit": 1,
+      "settings":[
+        {
+          "type": "text",
+          "id": "shop_by_designer_title",
+          "label": "Vendor list title",
+          "default": "Shop by Designer"
+        }
+      ]
+    },
+    {
+      "type":"text",
+      "name":"Sidebar text",
+      "settings":[
+        {
+          "type": "richtext",
+          "id": "sidebar_text",
+          "label": "Text",
+          "default": "<p>Add some text to your collection page sidebar</p>"
+        }
+      ]
+    },
+    {
+       "type":"side_filter",
+       "name":"Sidebar filter",
+       "settings":[
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Filter by"
+        },
+        {
+          "type": "textarea",
+          "id": "tags",
+          "label": "Tags to filter",
+          "info": "Add each tag for this filter, separated by a comma. Displayed in a left sidebar"
+        }
+      ]
+    },
+    {
+       "type":"dropdown_filter",
+       "name":"Dropdown filter",
+       "settings":[
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Filter by"
+        },
+        {
+          "type": "textarea",
+          "id": "tags",
+          "label": "Tags to filter",
+          "info": "Add each tag for this filter, separated by a comma. Displayed above products"
+        }
+      ]
+    },
+    {
+     "type":"image",
+     "name":"Sidebar image",
+     "settings":[
+       {
+         "type":"image_picker",
+         "id":"image",
+         "label":"Image"
+       },
+       {
+         "type":"url",
+         "id":"link",
+         "label":"Link",
+         "info":"Optional"
+       }
+     ]
+    }
+   ]
+  }
+{% endschema %}

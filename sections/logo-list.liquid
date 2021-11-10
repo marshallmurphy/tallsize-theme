@@ -1,0 +1,114 @@
+<section class="homepage-section logo__list-section" data-section-id="{{ section.id }}" data-aos="fade">
+{% if section.settings.full_width %}
+<div class="gridlock-fluid"><div class="row">
+{% endif %}
+
+  {% if section.settings.heading != blank %}
+  <div class="row">
+    <h2 class="section-heading desktop-12 mobile-3">{{ section.settings.heading | escape }}</h2>
+  </div>
+  {% endif %}
+
+    <div class="row logo__list-wrapper section-{{ section.id }}">
+      {% for block in section.blocks %}
+        <div class="logo__list-image">
+          {% if block.settings.link != blank %}<a href="{{ block.settings.link }}">{% endif %}
+          {% if block.settings.image != blank %}
+            {% render 'basic-responsive-image', type: block.settings.image, data_widths: '[180, 360, 540, 720, 900]' %}
+            <noscript>
+              <img src="{{ block.settings.image | img_url: '800x' }}" alt="{{ block.settings.image.alt }}">
+            </noscript>
+          {% else %}
+          <div class="onboard">
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+          {% endif %}
+          {% if block.settings.link != blank %}</a>{% endif %}
+        </div>
+      {% endfor %}
+    </div>
+    {% assign ipr = section.settings.images_per_row %}
+    <style>
+      .logo__list-wrapper.section-{{ section.id }} {
+        grid-template-columns: repeat({{ ipr }}, 1fr);
+      }
+      @media screen and (max-width: 740px) {
+        .logo__list-wrapper.section-{{ section.id }} {
+          grid-template-columns: repeat(3, 1fr);
+          grid-gap: 10px;
+        }
+      }
+    </style>
+
+{% if section.settings.full_width %}</div></div>{% endif %}
+</section>
+{% schema %}
+  {
+    "name": "Logo list",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "full_width",
+        "label": "Enable full width",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading",
+        "default": "Logo list"
+      },
+      {
+        "type":"range",
+        "id":"images_per_row",
+        "label":"Images per row",
+        "min": 3,
+        "max": 6,
+        "step": 1,
+        "default":  5
+      }
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "name": "Logo list image",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+          },
+          {
+              "type": "url",
+              "id": "link",
+              "label": "Link",
+              "info": "Optional"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Logo list",
+        "category": "Image",
+        "blocks": [
+          {
+            "type": "image"
+          },
+          {
+            "type": "image"
+          },
+          {
+            "type": "image"
+          },
+          {
+            "type": "image"
+          },
+          {
+            "type": "image"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

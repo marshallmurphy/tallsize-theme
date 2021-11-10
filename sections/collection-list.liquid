@@ -1,0 +1,109 @@
+<section class="homepage-section section-{{ section.id }}" data-section-id="{{ section.id }}" data-aos="fade">
+  <div class="row">
+    {% if section.settings.title != blank %}
+      <div>
+        <h2 class="section-heading">{{ section.settings.title | escape }}</h2>
+      </div>
+    {% endif %}
+    {% assign grid = section.settings.grid %}
+    <div class="collection-loop collection__list-collections">
+	  {% for block in section.blocks limit: section.blocks.size %}
+      {%- assign collection = collections[block.settings.collection] -%}
+        {% if block.settings.collection == blank %}
+          <div class="collection__list-item">
+            <div class="collection__item-image">
+              {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+              {%- assign placeholder = 'collection-' | append: current -%}
+              <div class="collection-image ci onboard">
+                <a href="#">
+                  {{ placeholder | placeholder_svg_tag: 'placeholder-svg' }}
+                </a>
+              </div>
+            </div>
+            <div class="collection__item-details">
+              <span class="prod-title">Sample collection</span>
+              <p>{{ forloop.index }} items</p>
+            </div>
+          </div>
+        {% else %}
+          {% render 'collection-grid-item',
+            collection: collection,
+            grid_item_width: grid_item_width %}
+        {% endif %}
+      {% endfor %}
+
+    {% if section.blocks.size == 0 %}
+      {% render 'no-blocks' %}
+    {% endif %}
+
+  </div>
+  <style>
+    .section-{{ section.id }} .collection__list-collections {
+      grid-template-columns: repeat({{ grid }}, 1fr);
+    }
+    @media screen and (max-width: 740px) {
+      .section-{{ section.id }} .collection__list-collections {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</section>
+<div class="clear"></div>
+{% schema %}
+{
+  "name": "Collection list",
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Collection list"
+    },
+    {
+      "type":      "range",
+      "id":        "grid",
+      "min":       2,
+      "max":       4,
+      "step":      1,
+      "label":     "Collections per row",
+      "default":   3
+    },
+    {
+      "type": "checkbox",
+      "id": "collection_count",
+      "label": "Show collections product count"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "featured_collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "label": "Collection",
+          "id": "collection",
+          "type": "collection"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection list",
+      "category": "Collection",
+      "settings": {
+      "grid": 2
+      },
+      "blocks": [
+        {
+          "type": "featured_collection"
+        },
+        {
+          "type": "featured_collection"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

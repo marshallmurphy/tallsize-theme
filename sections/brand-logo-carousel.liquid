@@ -1,0 +1,168 @@
+<section class="homepage-section" data-section-id="{{ section.id }}" data-section-type="homepage-products" data-aos="fade">
+  <div class="row">
+    {%- assign collection = collections[section.settings.collection] -%}
+    {%- assign slides = section.blocks.slides -%}
+    {% if section.settings.heading != blank %}
+    <h2 class="section-heading desktop-12 tablet-6 mobile-3">
+      <a href="{{ collection.url }}">{{ section.settings.heading | escape }}</a>
+    </h2>
+    <div class="clear"></div>
+    {% endif %}
+
+    {%- assign is_carousel = true -%}
+    {%- assign prod_limit = section.settings.limit -%}
+    {%- assign grid = section.settings.grid -%}
+    {% assign enough_to_wrap = true %}
+
+    {% capture slideshow_config %}{
+      "wrapAround":{{ enough_to_wrap }},
+      "cellAlign": "left",
+      "dragThreshold":"15",
+      "draggable": {{ enough_to_wrap }},
+      "pauseAutoPlayOnHover":false,
+      "prevNextButtons":{{ enough_to_wrap }},
+      "pageDots": false,
+      "autoPlay": true
+   }{% endcapture %}
+
+   <div id="featured_collection--{{ section.id }}" class="featured__collection{% if is_carousel %}-carousel flickity__section js-carousel{% endif %} product-loop"{% if is_carousel %} data-flickity='{{ slideshow_config }}'{% endif %}>
+    {% for block in section.blocks limit: prod_limit %}
+      <div class="featured__collection-brand">
+        {{ block.settings.slide_image | img_url: '350x' | img_tag }}
+      </div>
+    {% endfor %}
+   </div>
+  </div>
+
+  {% case section.settings.grid %}
+  {% when 2 %}
+  {%- assign prod_grid = 50 -%}
+  {% when 3 %}
+  {%- assign prod_grid = 33.333 -%}
+  {% when 4 %}
+  {%- assign prod_grid = 25 -%}
+  {% when 5 %}
+  {%- assign prod_grid = 20 -%}
+  {% when 6 %}
+  {%- assign prod_grid = 16.666 -%}
+  {% when 7 %}
+  {%- assign prod_grid = 14.286 -%}
+  {% when 8 %}
+  {%- assign prod_grid = 12.5 -%}
+  {% endcase %}
+
+  {% case section.settings.mobile_grid %}
+  {% when 2 %}
+  {%- assign mobile_prod_grid = 50 -%}
+  {% when 3 %}
+  {%- assign mobile_prod_grid = 33.333 -%}
+  {% when 4 %}
+  {%- assign mobile_prod_grid = 25 -%}
+  {% endcase %}
+
+  <style>
+  {% if section.settings.reduce_width %}
+  @media screen and (min-width: 741px) {
+    #featured_collection--{{ section.id }} {
+      width: 80%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+  {% endif %}
+  #featured_collection--{{ section.id }}.featured__collection-carousel .featured__collection-brand {
+    width: {{ prod_grid }}%;
+  }
+  @media screen and (max-width: 740px) {
+    #featured_collection--{{ section.id }}.featured__collection-carousel .featured__collection-brand {
+      width: {{ mobile_prod_grid }}%;
+    } 
+  }
+
+  #featured_collection--{{ section.id }}.featured__collection-carousel .flickity-slider {
+    display: flex;
+    align-items: center;
+  }
+
+  </style>
+</section>
+<div class="clear"></div>
+
+{% schema %}
+{
+  "name": "Brand Logo Carousel",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Brands"
+    },
+    {
+      "type": "checkbox",
+      "id": "reduce_width",
+       "label": "Reduce section width",
+       "info":"80% width on non mobile devices"
+    },
+    {
+      "type":      "range",
+      "id":        "grid",
+      "min":       2,
+      "max":       8,
+      "step":      1,
+      "label":     "Brands Shown",
+      "default":   4
+    },
+    {
+      "type":      "range",
+      "id":        "limit",
+      "min":       4,
+      "max":       50,
+      "step":      1,
+      "label":     "Total Brands in Carousel",
+      "default":   12
+    },
+    {
+      "type": "header",
+      "content": "Mobile Settings"
+    },
+    {
+      "type":      "range",
+      "id":        "mobile_grid",
+      "min":       1,
+      "max":       4,
+      "step":      1,
+      "label":     "Brands Shown on Mobile",
+      "default":   2
+    },
+    {
+      "type":      "range",
+      "id":        "mobile_limit",
+      "min":       4,
+      "max":       50,
+      "step":      1,
+      "label":     "Total Brands in Carousel on Mobile",
+      "default":   12
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slides",
+      "name": "Slide",
+      "settings": [
+        {
+          "id": "slide_image",
+          "type": "image_picker",
+          "label": "Image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand Logo Carousel",
+      "category": "Brands"
+    }
+  ]
+}
+{% endschema %}

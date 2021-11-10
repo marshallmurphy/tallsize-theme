@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="50px" height="35px" viewBox="-78 -40 240 180" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+    <title>icon_app</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="LayoutHub---design-and-brand-guidelines" transform="translate(-300.000000, -627.000000)">
+            <g id="logo-variations" transform="translate(50.000000, 261.000000)">
+                <g id="logo" transform="translate(250.000000, 32.000000)">
+                    <g id="app-icon" transform="translate(0.000000, 301.000000)">
+                        <g id="icon_app" transform="translate(0.000000, 33.000000)">
+                            <g id="logo" transform="translate(20.000000, 17.000000)" fill="#c9d7deba">
+                                <g id="right">
+                                    <path d="M12.4433462,29.3738527 L27.295082,26.0515604 L27.295082,38.6702849 L2.08153494e-11,44.7761194 L9.02389274e-13,3.05291723 L12.4433462,0 L12.4433462,29.3738527 Z" id="Combined-Shape"></path>
+                                </g>
+                                <g id="left" transform="translate(31.000000, 27.000000) rotate(-180.000000) translate(-31.000000, -27.000000) translate(17.000000, 4.000000)">
+                                    <path d="M12.4433462,29.8634169 L27.295082,26.4857531 L27.295082,39.3147897 L1.72114767e-10,45.5223881 L-1.01450103e-12,3.10379919 L12.4433462,-1.42108547e-14 L12.4433462,29.8634169 Z" id="Combined-Shape"></path>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

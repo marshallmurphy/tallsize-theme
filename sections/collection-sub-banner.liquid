@@ -1,0 +1,309 @@
+{% if section.settings.show_section and collection.url contains section.settings.sub_collection %}
+{% assign img_url = section.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+
+<section class="row collection__promotion-{{ section.id }} collection__promotion-section lazyload lazyload-fade"
+data-aos="fade"
+data-section-id="{{ section.id }}" >
+  {% if section.settings.link != blank and section.settings.button_text == blank %}<a href="{{ section.settings.link }}">{% endif %}
+  <div class="desktop-12 tablet-6 mobile-3 collection__promotion-container">
+    <div class="collection__promotion-image">
+    {% if section.settings.image != blank %}
+     {% render 'basic-responsive-image', type: section.settings.image %}
+    {% endif %}
+   </div>
+   <div class="collection__promotion-image-mobile">
+    {% if section.settings.image != blank %}
+     {% render 'mobile-responsive-image', type: section.settings.mobile_image %}
+    {% endif %}
+   </div>
+    <div class="collection__promotion-caption">
+      <div class="collection__promotion-caption-text">
+        {% unless section.settings.heading == blank %}
+          <h2>{{ section.settings.heading | escape }}</h2>
+        {% endunless %}
+        {%- unless section.settings.subheading == blank -%}
+          <div class="rte">
+            {{ section.settings.subheading }}
+          </div>
+        {%- endunless -%}
+        {% if section.settings.link != blank and section.settings.button_text != blank %}
+          <div class="clear"></div>
+          <a class="button" href="{{ section.settings.link }}">
+            {{ section.settings.button_text }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% if section.settings.link != blank and section.settings.button_text == blank %}</a>{% endif %}
+
+  <style>
+    .collection__promotion-{{ section.id }} .collection__promotion-container {
+      background-color: {{ section.settings.background_color }};
+    }
+    .collection__promotion-{{ section.id }} .collection__promotion-container .collection__promotion-image {
+      display: block;
+    }
+    .collection__promotion-{{ section.id }} .collection__promotion-container .collection__promotion-image-mobile {
+      display: none;
+    } 
+    .collection__promotion-{{ section.id }} .collection__promotion-caption {
+      {% if section.settings.text_align == 'center' %}
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50}%);
+      -moz-transform: translate(-50%, -50%);
+      -o-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      {% elsif section.settings.text_align == 'left' %}
+      left: 5%;
+      -webkit-transform: translate(-5%, -50%);
+      -ms-transform: translate(-5%, -50}%);
+      -moz-transform: translate(-5%, -50%);
+      -o-transform: translate(-5%, -50%);
+      transform: translate(-5%, -50%);
+      {% elsif section.settings.text_align == 'right' %}
+      left: 95%;
+      -webkit-transform: translate(-95%, -50%);
+      -ms-transform: translate(-95%, -50}%);
+      -moz-transform: translate(-95%, -50%);
+      -o-transform: translate(-95%, -50%);
+      transform: translate(-95%, -50%);
+      {% endif %}
+    }
+    .collection__promotion-{{ section.id }} .collection__promotion-caption-text {
+      text-align: {{ section.settings.text_align }};
+    }
+    .collection__promotion-{{ section.id }} .collection__promotion-caption-text h2 {
+      font-size: {{ section.settings.heading_font_size }}px;
+      color: {{ section.settings.text_color }};
+    }
+    .collection__promotion-{{ section.id }} .collection__promotion-caption-text .rte p,
+    .collection__promotion-{{ section.id }} .collection__promotion-caption-text .rte a {
+      font-size: {{ section.settings.subheading_font_size }}px;
+      color: {{ section.settings.text_color }};
+    }
+    .collection__promotion-{{ section.id }} .collection__promotion-caption-text a.button,
+    .collection__promotion-{{ section.id }} .collection__promotion-caption-text a.button:visited {
+      background: {{ section.settings.button_color }};
+      color: {{ section.settings.button_text_color }};
+    }
+    @media screen and (max-width: 740px) {
+      .collection__promotion-{{ section.id }} .collection__promotion-container .collection__promotion-image {
+        display: none;
+      }
+      .collection__promotion-{{ section.id }} .collection__promotion-container .collection__promotion-image-mobile {
+        display: block;
+      } 
+      .collection__promotion-{{ section.id }} .collection__promotion-caption-text h2 {
+        font-size: {{ section.settings.mobile_heading_font_size }}px;
+        color: {{ section.settings.mobile_text_color }};
+      }
+      .collection__promotion-{{ section.id }} .collection__promotion-caption-text .rte p,
+      .collection__promotion-{{ section.id }} .collection__promotion-caption-text .rte a {
+        font-size: {{ section.settings.mobile_subheading_font_size }}px;
+        color: {{ section.settings.mobile_text_color }};
+      }
+      .collection__promotion-{{ section.id }} .collection__promotion-caption-text a.button,
+      .collection__promotion-{{ section.id }} .collection__promotion-caption-text a.button:visited {
+        background: {{ section.settings.mobile_button_color }};
+        color: {{ section.settings.mobile_button_text_color }};
+      }
+    }
+  </style>
+</section>
+<div class="clear"></div>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Sub-Collection banner",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Add a banner that will be shown on a sub-collection (ie. shoes)."
+      },
+      {
+        "type": "checkbox",
+        "id": "show_section",
+        "label": "Show this section",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "sub_collection",
+        "label": "Sub Collection",
+        "default": "shoes",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "shoes",
+            "label": "Shoes"
+          },
+          {
+            "value": "plus-size",
+            "label": "Plus Size"
+          }
+        ]
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info" : "1400px x 200px recommended"
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background color",
+        "default": "#f5f5f5",
+        "info":"If no image present"
+      },
+      {
+        "type": "url",
+        "id": "link",
+        "label": "Link"
+      },
+      {
+        "type": "header",
+        "content": "Text content"
+      },
+      {
+        "type": "select",
+        "id": "text_align",
+        "label": "Caption alignment",
+        "default": "center",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Center"
+          },
+          {
+            "value": "right",
+            "label": "Right"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading",
+        "default": "Heading"
+      },
+      {
+        "type": "richtext",
+        "id": "subheading",
+        "label": "Text",
+        "default": "<p>Add a short sentence to your banner</p>"
+      },
+      {
+       "id": "button_text",
+       "type": "text",
+       "label": "Button",
+       "default": "Button",
+       "info": "Visible only if a link is chosen"
+      },
+      {
+        "type": "header",
+        "content": "Text styles"
+      },
+      {
+        "type": "range",
+        "id": "heading_font_size",
+        "min": 13,
+        "max": 36,
+        "step": 1,
+        "unit": "px",
+        "label": "Heading size",
+        "default": 26
+      },
+      {
+        "type": "range",
+        "id": "subheading_font_size",
+        "min": 13,
+        "max": 30,
+        "step": 1,
+        "unit": "px",
+        "label": "Text size",
+        "default": 16
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text color",
+        "default": "#000"
+      },
+      {
+        "type": "color",
+        "id": "button_text_color",
+        "label": "Button text",
+        "default": "#fff"
+      },
+      {
+        "type": "color",
+        "id": "button_color",
+        "label": "Button background",
+        "default": "#000"
+      },
+      {
+        "type": "header",
+        "content": "Mobile styles"
+      },
+      {
+        "type": "image_picker",
+        "id": "mobile_image",
+        "label": "Mobile Background image",
+        "info" : "A single 480px x 200px required!"
+      },
+      {
+        "type": "header",
+        "content": "Mobile Text styles"
+      },
+      {
+        "type": "range",
+        "id": "mobile_heading_font_size",
+        "min": 8,
+        "max": 36,
+        "step": 1,
+        "unit": "px",
+        "label": "Mobile Heading size",
+        "default": 24
+      },
+      {
+        "type": "range",
+        "id": "mobile_subheading_font_size",
+        "min": 4,
+        "max": 36,
+        "step": 1,
+        "unit": "px",
+        "label": "Mobile Text size",
+        "default": 16
+      },
+      {
+        "type": "color",
+        "id": "mobile_text_color",
+        "label": "Mobile Text color",
+        "default": "#fff"
+      },
+      {
+        "type": "color",
+        "id": "mobile_button_text_color",
+        "label": "Mobile Button text",
+        "default": "#fff"
+      },
+      {
+        "type": "color",
+        "id": "mobile_button_color",
+        "label": "Mobile Button background",
+        "default": "#000"
+      }
+ ]
+}
+{% endschema %}

@@ -1,0 +1,108 @@
+<div id="page" class="desktop-12 tablet-6 mobile-3">
+  <h2>{{ 'general.search.title' | t }}</h2>
+
+  {% assign grid = section.settings.grid %}
+  {%- assign product_limit = section.settings.grid | times: section.settings.rows -%}
+  {% paginate search.results by product_limit %}
+
+  <div id="search-bar" class="desktop-12 mobile-3">
+    <form action="{{ routes.search_url }}" method="get">
+      <p>{{ 'general.search.results_for_html' | t: terms: search.terms }}</p>
+      <input type="text" name="q" id="q" placeholder="{{ 'general.search.placeholder' | t }}" />
+    </form>
+  </div>
+
+  {% if search.performed %}
+
+<div class="desktop-12 tablet-6 mobile-3">
+  <div class="product-loop collection__page-products">
+    {% for item in search.results %}
+    {% assign products-per-row = section.settings.products_per_row %}
+
+    <div id="product-{{ item.id }}" class="product-index" data-alpha="{{ item.title }}" data-price="{{ item.price }}">
+      <div class="product-index-inner">
+
+        {% if item.object_type == 'article' %}
+        <!--'item' is an article All article object properties can be accessed. -->
+        {% if item.image %}
+        <div class="prod-image">
+          <a href="{{ item.url }}" title="{{ item.title | escape }}">
+            {%- render 'basic-responsive-image', type: item.image, data_widths: '[180, 360, 540, 720, 900]'  -%}
+            <noscript>
+              <img src="{{ item.image | img_url: '800x' }}" alt="{{ item.image.alt }}">
+            </noscript>
+          </a>
+        </div>
+        {% else %}
+        <div class="search-content prod-image">
+          {{ item.content | strip_html | truncate: 200 }}
+        </div>
+        {% endif %}
+        {% elsif item.object_type == 'page' %}
+
+        <!--'item' is a page. All page object properties can be accessed. -->
+
+        {% if item.content contains "img" %}
+        {% assign feat_image = item.content | split: 'src="' %}
+        {% assign feat_image = feat_image[1] | split: '"' | first | replace: '//cdn', 'http://cdn' | replace: 'http:http://', 'http://' | remove: 'https:'  %}
+        <div class="prod-image">
+          <a href="{{ item.url }}" title="{{ item.title | escape }}">
+            <img src="{{ feat_image }}" alt="{{ item.title }}">
+          </a>
+        </div>
+        {% else %}
+        <div class="search-content prod-image">
+          {{ item.content | strip_html | trancate: 200 }}
+        </div>
+        {% endif %}
+
+        {% else %}
+        <!-- 'item' is a product. All product object properties can be accessed.-->
+        {% render 'product-listing', product: item, collection: collection %}
+        {% endif %}
+
+      </div> <!-- Close product-index-inner class -->
+
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+  {% render 'pagination',
+  paginate: paginate %}
+
+  {% endif %}
+
+  {% endpaginate %}
+  <style>
+    .collection__page-products {
+      grid-template-columns: repeat({{ grid }}, 1fr);
+    }
+  </style>
+</div>
+
+{% schema %}
+  {
+    "name": "Search",
+    "settings": [
+      {
+        "type": "range",
+        "id": "grid",
+        "min": 2,
+        "max": 4,
+        "step": 1,
+        "label": "Items per row",
+        "default": 4
+      },
+      {
+        "type": "range",
+        "id": "rows",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "label": "Rows",
+        "default": 4
+      }
+  ]
+}
+{% endschema %}

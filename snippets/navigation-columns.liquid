@@ -1,0 +1,114 @@
+{% assign numx2 = num | times: 2 %}
+{% assign numx3 = num | times: 3 %}
+<ul class="megamenu">
+  <div class="megamenu__container">
+    <span class="desktop-12 tablet-6">
+      {% assign mega = 0 %}
+      {% assign mega = mega | plus: 1 %}
+      {% if numy >= 2 %}{% assign mega = mega | plus: 1 %}{% endif %}
+      {% if numy >= 3 %}{% assign mega = mega | plus: 1 %}{% endif %}
+      {% if mod > 0 %}{% assign mega = mega | plus: 1 %}{% endif %}
+      {% if mega > 0 %}
+      <!-- Start Megamenu Inner Links -->
+      <li class="megamenu__splitcontainer desktop-{{ 12 | divided_by: mega }}">
+        <ul class="megamenu__listcontainer">
+          {% for sub_link in link.links limit: num %}
+          <li class="megamenu__listitem">
+            <a class="megamenu__listlink" href="{{ sub_link.url }}">{{ sub_link.title }}</a>
+            {% if sub_link.links != blank %}
+              <ul class="megamenu__nestedlistcontainer">
+                {% for sub_sub_link in sub_link.links %}
+                  <li class="megamenu__nestedlistitem">
+                    <a class="megamenu__nestedlistlink" href="{{ sub_sub_link.url }}">{{ sub_sub_link.title }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </li>
+      {% if numy >= 2 %}
+      <li class="megamenu__splitcontainer desktop-{{ 12 | divided_by: mega }}">
+        <ul class="megamenu__listcontainer">
+          {% for sub_link in link.links limit: num offset: num %}
+            <li class="megamenu__listitem">
+              <a class="megamenu__listlink" href="{{ sub_link.url }}">{{ sub_link.title }}</a>
+              {% if sub_link.links != blank %}
+                <ul class="megamenu__nestedlistcontainer">
+                  {% for sub_sub_link in sub_link.links %}
+                  <li class="megamenu__nestedlistitem">
+                    <a class="megamenu__nestedlistlink" href="{{ sub_sub_link.url }}">{{ sub_sub_link.title }}</a>
+                  </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </li>
+      {% endif %}
+      {% if numy >= 3 %}
+      <li class="megamenu__splitcontainer desktop-{{ 12 | divided_by: mega }}">
+        <ul class="megamenu__listcontainer">
+          {% for sub_link in link.links limit: num offset: numx2 %}
+          <li class="megamenu__listitem">
+            <a class="megamenu__listlink" href="{{ sub_link.url }}">{{ sub_link.title }}</a>
+            {% if sub_link.links != blank %}
+              <ul class="megamenu__nestedlistcontainer">
+                {% for sub_sub_link in sub_link.links %}
+                  <li class="megamenu__nestedlistitem">
+                    <a class="megamenu__nestedlistlink" href="{{ sub_sub_link.url }}">{{ sub_sub_link.title }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </li>
+      {% endif %}
+      {% if numy >= 4 %}
+      <li class="megamenu__splitcontainer desktop-{{ 12 | divided_by: mega }}">
+        <ul class="megamenu__listcontainer">
+          {% for sub_link in link.links limit: num offset: numx3 %}
+          <li class="megamenu__listitem">
+            <a class="megamenu__listlink" href="{{ sub_link.url }}">{{ sub_link.title }}</a>
+            {% if sub_link.links != blank %}
+              <ul class="megamenu__nestedlistcontainer">
+                {% for sub_sub_link in sub_link.links %}
+                  <li class="megamenu__nestedlistitem">
+                    <a class="megamenu__listlink" href="{{ sub_sub_link.url }}">{{ sub_sub_link.title }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </li>
+      {% endif %}
+      {% if mod > 0 %}
+      <li class="megamenu__splitcontainer desktop-{{ 12 | divided_by: mega }}">
+        <ul class="megamenu__listcontainer">
+          {% for sub_link in link.links limit: num offset: mod_offset %}
+          <li class="megamenu__listitem">
+            <a class="megamenu__listlink" href="{{ sub_link.url }}">{{ sub_link.title }}</a>
+            {% if sub_link.links != blank %}
+              <ul class="megamenu__nestedlistcontainer">
+                {% for sub_sub_link in sub_link.links %}
+                  <li class="megamenu__nestedlistitem">
+                    <a class="megamenu__nestedlistlink" href="{{ sub_sub_link.url }}">{{ sub_sub_link.title }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </li>
+      {% endif %}
+      {% endif %}
+    </span>
+  </div>
+</ul>

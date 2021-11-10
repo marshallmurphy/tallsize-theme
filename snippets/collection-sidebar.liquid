@@ -1,0 +1,170 @@
+<hr />
+<a class="show js-sidebar-toggle mobile-3" href="#">
+	Filter
+</a>
+<div class="desktop-2 tablet-6 mobile-3 collection__page-sidebar" id="sidebar">
+  {% for block in section.blocks %}
+  <div class="collection__sidebar-block" {{ block.shopify_attributes }}>
+  {% case block.type %}
+  {% when 'vendor_list' %}
+    {% if collection.handle == "all" %}
+    <ul>
+      <h4>{{ block.settings.shop_by_designer_title }}</h4>
+      {% for product_vendor in shop.vendors %}
+      <li>{{ product_vendor | link_to_vendor  }}</li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <ul>
+      <h4>{{ block.settings.shop_by_designer_title }}</h4>
+      {% for product_vendor in collection.all_vendors %}
+      <li class="{{ product_vendor | handelize }}">{{ product_vendor | link_to_vendor }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  {% when 'menu' %}
+    <h4>{{ block.settings.heading }}</h4>
+
+    {% assign unique_id = block.id | slice: 0, 7 %}
+    {% assign mobile_menu_allow_multiple = false %}
+
+    <ul class="js-accordion js-accordion-mobile-nav c-accordion  c-accordion--collection-sidebar c-accordion--{{unique_id}}"
+        id="c-accordion--{{unique_id}}"
+        {% if mobile_menu_allow_multiple %}
+
+        data-accordion-allow-multiple
+        {% endif %}
+
+         {{ block.shopify_attributes }}>
+
+      {% for link in linklists[block.settings.side_nav].links %}
+
+        {% assign level_one_nested_link_count = 0 %}
+
+        {% if link.links != blank %}
+
+          {% assign level_one_nested_link_count = level_one_nested_link_count | plus: 1 %}
+
+          {% assign level_one_link_index = forloop.index %}
+          {% assign accordion_content_id = 'c-accordion__panel--' | append: unique_id | append: '-' | append: level_one_link_index %}
+
+          <li class="js-accordion-header c-accordion__header">
+            <a class="js-accordion-link c-accordion__link" href="{{ link.url }}">{{ link.title | escape }}</a>
+            <button class="dropdown-arrow" aria-label="{{  link.title | escape }}" data-toggle="accordion" aria-expanded="false" aria-controls="{{ accordion_content_id }}" >
+              <i class="fa fa-angle-down"></i>
+            </button>
+          </li>
+
+          <li class="c-accordion__panel {{ accordion_content_id }}" id="{{ accordion_content_id }}" data-parent="#c-accordion--{{ unique_id }}">
+
+            {% assign level_two_unique_id = unique_id | append: '-' | append: level_one_nested_link_count %}
+
+            <ul class="js-accordion js-accordion-mobile-nav c-accordion c-accordion--collection-sidebar c-accordion--mobile-nav__inner c-accordion--{{ level_two_unique_id }}" id="c-accordion--{{ level_two_unique_id }}">
+
+              {% for sub_link in link.links %}
+                {% if sub_link.links != blank %}
+
+                    {% assign level_two_link_index = forloop.index %}
+                    {% assign level_two_accordion_content_id = 'c-accordion__panel--' | append: unique_id | append: '-' | append: level_one_link_index | append: '-' | append: level_two_link_index %}
+
+                    <li class="js-accordion-header c-accordion__header">
+                      <a class="js-accordion-link c-accordion__link" href="{{ sub_link.url }}">{{ sub_link.title | escape }}</a>
+                      <button class="dropdown-arrow" aria-label="{{  sub_link.title | escape }}" data-toggle="accordion" aria-expanded="false" aria-controls="{{ level_two_accordion_content_id }}" >
+                        <i class="fa fa-angle-down"></i>
+                      </button>
+                    </li>
+
+                    <li class="c-accordion__panel {{ level_two_accordion_content_id }}" id="{{ level_two_accordion_content_id }}" data-parent="#c-accordion--{{ level_two_unique_id }}">
+                      <ul>
+                        {% for sub_sub_link in sub_link.links %}
+
+                          <li>
+                            <a class="js-accordion-link c-accordion__link" href="{{ sub_sub_link.url }}">{{ sub_sub_link.title }}</a>
+                          </li>
+
+                        {% endfor %}
+                      </ul>
+                    </li>
+                {% else %}
+                <li>
+                  <a class="js-accordion-link c-accordion__link" href="{{ sub_link.url }}">{{ sub_link.title | escape }}</a>
+                </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </li>
+        {% else %}
+        <li>
+          <a class="js-accordion-link c-accordion__link" href="{{ link.url }}">{{ link.title | escape }}</a>
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul><!-- /.c-accordion.c-accordion--mobile-nav -->
+  {% when 'text' %}
+  <div class="textnote_container">
+    {{ block.settings.sidebar_text }}
+  </div>
+
+  {% when 'image' %}
+  {%- assign image_size = '450x' -%}
+    <div class="image_container" {% if forloop.index == 1 %}style="margin-top:0;"{% endif %}>
+      <a href="{{ block.settings.link }}">
+        {% if block.settings.image != blank %}
+          <img src="{{ block.settings.image | img_url: image_size }}" alt="{{ block.settings.image.alt }}">
+        {% else %}
+          {{ 'collection-1' | placeholder_svg_tag }}
+        {% endif %}
+      </a>
+    </div>
+
+  {% when 'side_filter' %}
+  {%- liquid
+  assign is_size_filter = false
+  assign is_color_filter = false
+  assign tags = block.settings.tags  | replace: ' ,', ',' | replace: ', ', ',' | split: ','
+  assign filter_title_to_lowercase = block.settings.heading | downcase
+  if filter_title_to_lowercase contains "color" or filter_title_to_lowercase contains "colour"
+    assign is_color_filter = true
+  endif
+  if filter_title_to_lowercase contains "size"
+    assign is_size_filter = true
+  endif
+  -%}
+    <div class="sidebar-filter{% if is_color_filter %} filter--color{% endif %}{% if is_size_filter %} filter--size{% endif %}">
+      <h4>{{ block.settings.heading }}</h4>
+      <ul>
+        {% for tag in tags %}
+          {% comment %}
+          If color filter then capture data for color filters
+          {% endcomment %}
+          {% if is_color_filter %}
+            {% assign swatch_image_url = tag | handle | append: '.png' | file_url %}
+            {% assign css_color = tag | split: ' ' | last | handle %}
+            {% capture inline_style %}
+              background-color: {{ css_color }}; background-image: url('{{ swatch_image_url }}');
+            {% endcapture %}
+          {% endif %}
+          {% if current_tags contains tag %}
+          <li class="current">
+            {% if is_color_filter %}
+              <span class="color-filter color-filter--current color-filter--rounded current" data-tag="{{ tag | handle }}" style="{{ inline_style }}" role="button" title="{{ tag }}"></span>
+            {% else %}
+              <a data-tag="{{ tag | handle }}" class="current" href="javascript:void(0)">{{ tag }}</a>
+            {% endif %}
+          </li>
+          {% elsif collection.all_tags contains tag %}
+          <li>
+            {% if is_color_filter %}
+              <span class="color-filter color-filter--rounded" data-tag="{{ tag | handle }}" role="button" title="{{ tag }}" style="{{ inline_style }}"></span>
+            {% else %}
+              <a data-tag="{{ tag | handle }}" href="javascript:void(0)">{{ tag }}</a>
+            {% endif %}
+          </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  {% endcase %}
+  </div>
+  {% endfor %}
+</div>

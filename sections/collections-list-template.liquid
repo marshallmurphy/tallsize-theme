@@ -1,0 +1,160 @@
+<section data-section-id="{{ section.id }}" class="collection-list-template">
+
+  {% assign grid = section.settings.grid %}
+  {%- assign product_limit = section.settings.grid | times: section.settings.rows -%}
+  {% paginate collections by product_limit %}
+
+  {% if section.settings.image != blank %}
+    <div class="collection-banner">
+      {% render 'basic-responsive-image', type: section.settings.image, data_widths: '[180, 360, 540, 720, 900, 1080]' %}
+      <noscript>
+        <img src="{{ section.settings.image | img_url: '1024x' }}" alt="{{ section.settings.image.alt }}">
+      </noscript>
+    </div>
+  {% endif %}
+
+  <div id="content" class="row">
+    {% if settings.breadcrumb %}
+    {% render 'breadcrumb' %}
+    {% endif %}
+
+    <div class="collection__page-description desktop-12 tablet-6 mobile-3">
+      <h1>{{ 'collections.general.all_collections' | t }}</h1>
+      {% if section.settings.text != blank %}
+      {{ section.settings.text }}
+      {% endif %}
+    </div>
+
+    <div class="collection-loop collection__list-collections">
+      {% assign products-per-row = section.settings.products_per_row %}
+      {% if section.settings.collections_shown == 'all' %}
+      {% for collection in collections %}
+      {% render 'collection-grid-item',
+        collection: collection,
+        grid_item_width: grid_item_width %}
+      {% endfor %}
+      {% else %}
+      {% for block in section.blocks limit: section.blocks.size %}
+      {%- assign collection = collections[block.settings.collection] -%}
+      {% if block.settings.collection == blank %}
+        <div class="collection__list-item">
+          <div class="collection__item-image">
+            {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+            {%- assign placeholder = 'collection-' | append: current -%}
+            <div class="collection-image ci onboard">
+              <a href="#">
+                {{ placeholder | placeholder_svg_tag: 'placeholder-svg' }}
+              </a>
+            </div>
+          </div>
+          <div class="collection__item-details">
+            <span class="prod-title">Sample collection</span>
+            <p>{{ forloop.index }} items</p>
+          </div>
+        </div>
+      {% else %}
+        {% render 'collection-grid-item',
+          collection: collection,
+          grid_item_width: grid_item_width %}
+      {% endif %}
+      {% endfor %}
+      {% endif %}
+    </div>
+
+    {% render 'pagination',
+  paginate: paginate %}
+
+    {% endpaginate %}
+  </div>
+  <style>
+  .collection__list-collections {
+    grid-template-columns: repeat({{ grid }}, 1fr);
+  }
+  {% if section.settings.collections_shown == 'selected' %}
+  div#pagination {
+    display: none;
+  }
+  .collection__list-collections {
+    margin-bottom: 50px !important;
+  }
+  {% endif %}
+  </style>
+</section>
+
+
+{% schema %}
+  {
+    "name": "Collection list",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Image"
+      },
+      {
+        "id": "text",
+        "type": "richtext",
+        "label": "Text",
+        "default": "<p>Add some descriptive text to your all collections page.</p>"
+      },
+      {
+        "type": "header",
+        "content": "Layout options"
+      },
+      {
+        "type": "range",
+        "id": "grid",
+        "min": 2,
+        "max": 4,
+        "step": 1,
+        "label": "Collections per row",
+        "default": 3
+      },
+      {
+        "type": "range",
+        "id": "rows",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "label": "Rows",
+        "default": 4,
+        "info":"When showing all collections"
+      },
+      {
+        "type": "checkbox",
+        "id": "collection_count",
+        "label": "Show collections product count"
+      },
+      {
+        "type": "header",
+        "content": "Choose collections"
+      },
+      {
+       "type": "paragraph",
+       "content": "All collections will show in alphabetical order. Choose 'selected' to choose collecitons specific collections only"
+     },
+      {
+         "type": "radio",
+         "id": "collections_shown",
+         "options": [
+            { "value": "all", "label": "All"},
+            { "value": "selected", "label": "Selected"}
+         ],
+         "label": "Collections to display"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "collection",
+        "name": "Collection",
+        "settings": [
+          {
+            "label": "Collection",
+            "id": "collection",
+            "type": "collection"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

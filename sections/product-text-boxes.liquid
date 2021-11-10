@@ -1,0 +1,185 @@
+{% if section.settings.show_section %}
+<section class="product__alt-section section-{{ section.id }} usp__section" data-section-id="{{ section.id }}" data-aos="fade">
+  <div class="row usp__section-container">
+  {% for block in section.blocks %}
+  {% assign grid = section.blocks.size %}
+    {% if block.settings.link != blank %}<a href="{{ block.settings.link }}">{% endif %}
+      <div class="usp__content usp-{{ block.id }}">
+        <h3>{{ block.settings.heading | escape }}</h3>
+        {{ block.settings.textarea }}
+      </div>
+    {% if block.settings.link != blank %}</a>{% endif %}
+    {% endfor %}
+  </div>
+  {% if section.blocks.size == 0 %}
+    {% render 'no-blocks' %}
+  {% endif %}
+  <style>
+    .section-{{ section.id }}.usp__section {
+      background: {{ section.settings.background }};
+      padding: {{ section.settings.vertical_spacing }}px 0 !important;
+    }
+    .usp__section-container {
+      display: grid;
+      grid-template-columns: repeat({{ grid }}, 1fr);
+      column-gap: {{ section.settings.spacing }}px;
+      justify-items: stretch;
+    }
+    .section-{{ section.id }}.usp__section .usp__content h3 {
+      font-size: {{ section.settings.notification_heading_size }}px;
+      margin-bottom: 10px
+    }
+    .section-{{ section.id }}.usp__section .usp__content p {
+      font-size: {{ section.settings.notification_font_size }}px;
+    }
+
+    .usp__content h3,
+    .usp__content p,
+    .usp__content a,
+    .usp__content a:visited {
+      color: {{ section.settings.text_color }};
+    }
+    {% if section.settings.add_divider %}
+    {% assign gap = section.settings.spacing | divided_by: 2 %}
+    .row.usp__section-container .usp__content:nth-child(2n):after,
+    .row.usp__section-container .usp__content:nth-child(2n):before {
+        content: "";
+        position: absolute;
+        height: 50%;
+        width: 1px;
+        background: {{ section.settings.text_color }};
+        opacity: 0.7;
+    }
+    .row.usp__section-container .usp__content:nth-child(2n):after {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translate({{ gap }}px, -50%);
+    }
+    .row.usp__section-container .usp__content:nth-child(2n):before {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translate(-{{ gap }}px, -50%);
+    }
+    .row.usp__section-container .usp__content:last-child:after {
+      display: none;
+    }
+    {% endif %}
+    @media screen and ( max-width: 740px ) {
+    {% if section.blocks.size > 1 %}
+      .usp__section-container {
+          display: flex !important;
+          flex-wrap: nowrap !important;
+          overflow-x: auto !important;
+          -webkit-overflow-scrolling: touch;
+          margin-bottom: 10px;
+      }
+      .usp__section-container::-webkit-scrollbar {
+        display: none;
+        -ms-overflow-style: none;
+      }
+      .usp__content {
+          flex: 0 0 auto;
+          width: 270px;
+          margin-right: {{ section.settings.spacing }}px;
+      }
+      .usp__content:last-child {
+        margin-right: 0;
+      }
+      {% endif %}
+    }
+  </style>
+</section>
+{% endif %}
+{% schema %}
+{
+  "name": "Product text banner",
+  "max_blocks": 3,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_section",
+      "label": "Enable text section"
+    },
+    {
+      "type":      "range",
+      "id":        "notification_heading_size",
+      "min":       13,
+      "max":        36,
+      "step":       1,
+      "unit":       "px",
+      "label":     "Heading size",
+      "default":   23
+    },
+    {
+      "type":      "range",
+      "id":        "notification_font_size",
+      "min":       13,
+      "max":        22,
+      "step":       1,
+      "unit":       "px",
+      "label":     "Text size",
+      "default":   14
+    },
+    {
+      "type":      "range",
+      "id":        "vertical_spacing",
+      "min":       0,
+      "max":        80,
+      "step":       5,
+      "unit":       "px",
+      "label":     "Vertical padding",
+      "default":   30
+    },
+    {
+      "type":      "range",
+      "id":        "spacing",
+      "min":       0,
+      "max":        20,
+      "step":       1,
+      "unit":       "px",
+      "label":     "Space between columns",
+      "default":   20
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#444444"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type":"checkbox",
+      "id":"add_divider",
+      "label":"Add divider between columns",
+      "default":true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "id": "heading",
+          "type": "text",
+          "label": "Heading",
+          "default": "Selling point title"
+        },
+        {
+          "id": "textarea",
+          "type": "richtext",
+          "label": "Text",
+          "default": "<p>Add some featured text to highlight your selling points</p>"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
